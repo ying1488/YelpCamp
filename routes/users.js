@@ -30,4 +30,14 @@ req.flash('success','welcome back!');
 res.redirect('/campgrounds');
 })
 
+router.get('/logout',(req,res,next)=>{
+  req.logout(function(err){
+    if(err){
+      return next(err);
+    }
+    req.flash('success','Goodbye!');
+  res.redirect('/campgrounds');
+  });
+});
+
 module.exports = router
