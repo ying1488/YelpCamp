@@ -6,11 +6,9 @@ module.exports.isLoggedIn = (req,res,next)=>{
   }
   next();
 }
-
-module.exports.storeReturnTo = (req,res,next)=>{
-  if(req.session.returnTo){
-    res.locals.returnTo =
+module.exports.storeReturnTo = (req, res, next) => {
+  if (req.session.returnTo) {
       res.locals.returnTo = req.session.returnTo;
-    }
-    next();
   }
+  next();
+}
