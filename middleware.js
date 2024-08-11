@@ -50,7 +50,7 @@ module.exports.validateReview = (req, res, next) => {
   } else {
     next();
   }
-};
+}
 
 module.exports.storeReturnTo = (req, res, next) => {
   if (req.session.returnTo) {
