@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
-const cities = require('./cities');
-const { places, descriptors } = require('./seedHelpers');
-const Campground = require('../models/campgrounds');
+const mongoose = require("mongoose");
+const cities = require("./cities");
+const { places, descriptors } = require("./seedHelpers");
+const Campground = require("../models/campgrounds");
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+mongoose.connect("mongodb://localhost:27017/yelp-camp", {
   useNewUrlParser: true,
 
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
 
 const db = mongoose.connection;
@@ -16,8 +16,7 @@ db.once("open", () => {
   console.log("Database connected");
 });
 
-const sample = array => array[Math.floor(Math.random() * array.length)];
-
+const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
   await Campground.deleteMany({});
@@ -25,17 +24,27 @@ const seedDB = async () => {
     const random1000 = Math.floor(Math.random() * 1000);
     const price = Math.floor(Math.random() * 20) + 10;
     const camp = new Campground({
-      author:'668be3a99049584011babc7c',
+      author: "668be3a99049584011babc7c",
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       title: `${sample(descriptors)} ${sample(places)}`,
-      image: 'https://plus.unsplash.com/premium_photo-1676140621026-5c10ec3a875f?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!',
-      price
-    })
+      images: [
+        {
+          url: "https://res.cloudinary.com/dwe1byozy/image/upload/v1729347409/YelpCamp/wxllmcbiuyshzluv2nrr.jpg",
+          filename: "YelpCamp/wxllmcbiuyshzluv2nrr",
+        },
+        {
+          url: "https://res.cloudinary.com/dwe1byozy/image/upload/v1729347419/YelpCamp/amo0dmrlrtg8gtwbjaax.jpg",
+          filename: "YelpCamp/amo0dmrlrtg8gtwbjaax",
+        },
+      ],
+      description:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!",
+      price,
+    });
     await camp.save();
   }
-}
+};
 
 seedDB().then(() => {
   mongoose.connection.close();
-})
+});
