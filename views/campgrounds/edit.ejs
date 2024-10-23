@@ -1,5 +1,4 @@
-<% layout('layouts/boilerplate') %>
-
+<% layout('layouts/boilerplate')%>
 <div class="row">
   <h1 class="text-center">Edit Campground</h1>
   <div class="col-6 offset-3">
@@ -49,7 +48,7 @@
             name="campground[price]"
             value="<%=campground.price %>"
             required
-          />
+          />\
           <div class="valid-feedback">Looks good!</div>
         </div>
       </div>
@@ -63,7 +62,7 @@
           name="campground[description]"
           required
         >
-            <%=campground.description%></textarea
+<%= campground.description%></textarea
         >
         <div class="valid-feedback">Looks good!</div>
       </div>
@@ -78,16 +77,31 @@
           />
           <label class="form-file-label" for="image">
             <span class="form-file-text custom-file-label"
-              >Choose image(s)...</span
+              >Add more image(s)...</span
             >
             <span class="form-file-button">Browse</span>
           </label>
         </div>
       </div>
       <div class="mb-3">
+        <% campground.images.forEach(function(img, i) { %>
+
+        <img src="<%=img.thumbnail %>" class="img-thumbnail" alt="" />
+        <div class="form-check-inline">
+          <input
+            type="checkbox"
+            id="image-<%=i%>"
+            name="deleteImages[]"
+            value="<%=img.filename%>"
+          />
+        </div>
+        <label for="image-<%=i%>">Delete?</label>
+        <% })%>
+      </div>
+      <div class="mb-3">
         <button class="btn btn-info">Update Campground</button>
       </div>
     </form>
-    <a href="/campgrounds/<%=campground._id%>">Back to Campground </a>
+    <a href="/campgrounds/<%= campground._id%>">Back To Campground</a>
   </div>
 </div>
