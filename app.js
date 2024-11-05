@@ -1,8 +1,5 @@
-if (process.env.NODE_ENV !== "production"){
-  require ('dotenv').config();
-}
 
-console.log(process.env.SECRET)
+  require ('dotenv').config();
 
 const express = require("express");
 const path = require("path");
@@ -20,7 +17,7 @@ const userRoutes = require('./routes/users.js')
 const campgroundsRoutes = require("./routes/campgrounds.js");
 const reviewsRoutes = require("./routes/reviews");
 const mongoSanitize = require('express-mongo-sanitize');
-
+const helmet = require ("helmet");
 //connect to mongoose
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
   useNewUrlParser: true,
@@ -47,6 +44,7 @@ app.use( mongoSanitize({
 }),);
 
 const sessionConfig = {
+  name:'session',
   secret: "thisshouldbeabettersecret!",
   resave: false,
   saveUninitialized: true,
@@ -58,7 +56,47 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(helmet());
+const scriptSrcUrls = [
+  "https://stackpath.bootstrapcdn.com/",
+  "https://kit.fontawesome.com/",
+  "https://cdnjs.cloudflare.com/",
+  "https://cdn.jsdelivr.net",
+  "https://cdn.maptiler.com/", // add this
+];
+const styleSrcUrls = [
+  "https://kit-free.fontawesome.com/",
+  "https://stackpath.bootstrapcdn.com/",
+  "https://fonts.googleapis.com/",
+  "https://use.fontawesome.com/",
+  "https://cdn.jsdelivr.net",
+  "https://cdn.maptiler.com/", 
+];
+const connectSrcUrls = [
+  "https://api.maptiler.com/", ];
+  const fontSrcUrls = [];
 
+app.use(
+  helmet.contentSecurityPolicy({
+      directives: {
+          defaultSrc: [],
+          connectSrc: ["'self'", ...connectSrcUrls],
+          scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+          styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+          workerSrc: ["'self'", "blob:"],
+          objectSrc: [],
+          imgSrc: [
+              "'self'",
+              "blob:",
+              "data:",
+              "https://res.cloudinary.com/dwe1byozy/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+              "https://images.unsplash.com/",
+              "https://api.maptiler.com/"
+          ],
+          fontSrc: ["'self'", ...fontSrcUrls],
+      },
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
