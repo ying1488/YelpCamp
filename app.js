@@ -20,16 +20,13 @@ const reviewsRoutes = require("./routes/reviews");
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require ("helmet");
 
-const dbUrl = process.env.DB_URL 
-// || 'mongodb://localhost:27017/yelp-camp';
-
+const MongoStore = require('connect-mongo');
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
 
 mongoose.connect(dbUrl, {
   useNewUrlParser: true,
 useUnifiedTopology: true,
-
 });
-
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -49,6 +46,19 @@ app.use( mongoSanitize({
   replaceWith: '_',
 }),);
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+      secret: 'thisshouldbeabettersecret!'
+  }
+});
+
+store.on("error", function (e) {
+    console.log("SESSION STORE ERROR", e)
+})
+
 const sessionConfig = {
   name:'session',
   secret: "thisshouldbeabettersecret!",
@@ -60,9 +70,11 @@ const sessionConfig = {
     maxAge: 1000 * 60 * 60 * 24 * 7
   },
 };
+
 app.use(session(sessionConfig));
 app.use(flash());
 app.use(helmet());
+
 const scriptSrcUrls = [
   "https://stackpath.bootstrapcdn.com/",
   "https://kit.fontawesome.com/",
